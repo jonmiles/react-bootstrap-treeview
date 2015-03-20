@@ -144,26 +144,22 @@ var TreeNode = React.createClass({displayName: "TreeNode",
     if (node.nodes) {
       if (!this.state.expanded) {
         expandCollapseIcon = (
-          React.createElement("span", {className: "expand-collapse click-expand", 
-                onClick: this.toggleExpanded.bind(this, node.nodeId)}, 
-            React.createElement("i", {className: options.expandIcon})
+          React.createElement("span", {className: options.expandIcon, 
+                onClick: this.toggleExpanded.bind(this, node.nodeId)}
           )
         );
       }
       else {
         expandCollapseIcon = (
-          React.createElement("span", {className: "expand-collapse click-collapse", 
-                onClick: this.toggleExpanded.bind(this, node.nodeId)}, 
-            React.createElement("i", {className: options.collapseIcon})
+          React.createElement("span", {className: options.collapseIcon, 
+                onClick: this.toggleExpanded.bind(this, node.nodeId)}
           )
         );
       }
     }
     else {
       expandCollapseIcon = (
-        React.createElement("span", {className: "expand-collapse"}, 
-          React.createElement("i", {className: options.emptyIcon})
-        )
+        React.createElement("span", {className: options.emptyIcon})
       );
     }
 

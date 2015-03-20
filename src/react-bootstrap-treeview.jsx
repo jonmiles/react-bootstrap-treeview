@@ -144,26 +144,22 @@ var TreeNode = React.createClass({
     if (node.nodes) {
       if (!this.state.expanded) {
         expandCollapseIcon = (
-          <span className="expand-collapse click-expand" 
+          <span className={options.expandIcon}
                 onClick={this.toggleExpanded.bind(this, node.nodeId)}>
-            <i className={options.expandIcon}></i>
           </span>
         );
       }
       else {
         expandCollapseIcon = (
-          <span className="expand-collapse click-collapse" 
+          <span className={options.collapseIcon}
                 onClick={this.toggleExpanded.bind(this, node.nodeId)}>
-            <i className={options.collapseIcon}></i>
           </span>
         );
       }
     }
     else {
       expandCollapseIcon = (
-        <span className="expand-collapse">
-          <i className={options.emptyIcon}></i>
-        </span>
+        <span className={options.emptyIcon}></span>
       );
     }
 
