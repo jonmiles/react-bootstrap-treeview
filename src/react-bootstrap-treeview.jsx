@@ -53,7 +53,7 @@ var Tree = React.createClass({
     if (!node.nodes) return;
 
     var _this = this;
-    $.each(node.nodes, function checkStates(index, node) {
+    node.nodes.forEach(function checkStates(node) {
       node.nodeId = _this.props.nodes.length;
       _this.props.nodes.push(node);
       _this.setNodeId(node);
@@ -66,12 +66,13 @@ var Tree = React.createClass({
 
     var children = [];
     if (data) {
-      data.forEach($.proxy(function (node) {
+      var _this = this;
+      data.forEach(function (node) {
         children.push(<TreeNode node={node}
                                 level={1}
                                 visible={true}
-                                options={this.props} />);
-      }, this));
+                                options={_this.props} />);
+      });
     }
 
     return (
@@ -194,12 +195,13 @@ var TreeNode = React.createClass({
 
     var children = [];
     if (node.nodes) {
-      node.nodes.forEach($.proxy(function (node) {
+      var _this = this;
+      node.nodes.forEach(function (node) {
         children.push(<TreeNode node={node}
-                                level={this.props.level+1}
-                                visible={this.state.expanded && this.props.visible}
+                                level={_this.props.level+1}
+                                visible={_this.state.expanded && _this.props.visible}
                                 options={options} />);
-      }, this));
+      });
     }
 
     return (
