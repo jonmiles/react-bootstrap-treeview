@@ -35,7 +35,7 @@ var Tree = React.createClass({displayName: "Tree",
       color: undefined,
       backColor: undefined,
       borderColor: undefined,
-      onhoverColor: '#F5F5F5',
+      onhoverColor: '#F5F5F5', // TODO Not implemented yet, investigate radium.js 'A toolchain for React component styling'
       selectedColor: '#FFFFFF',
       selectedBackColor: '#428bca',
 
@@ -119,22 +119,33 @@ var TreeNode = React.createClass({displayName: "TreeNode",
 
     var style;
     if (!this.props.visible) {
+
       style = { 
         display: 'none' 
-      }
-    }
-    else if (options.highlightSelected && this.state.selected) {
-      style = {
-        color: options.selectedColor,
-        backgroundColor: options.selectedBackColor
-      }
+      };
     }
     else {
-      style = {
-        color: options.color,
-        backgroundColor: options.backColor
+
+      if (options.highlightSelected && this.state.selected) {
+        style = {
+          color: options.selectedColor,
+          backgroundColor: options.selectedBackColor
+        };
       }
-    }
+      else {
+        style = {
+          color: node.color || options.color,
+          backgroundColor: node.backColor || options.backColor
+        };
+      }
+
+      if (!options.showBorder) {
+        style.border = 'none';
+      }
+      else if (options.borderColor) {
+        style.border = '1px solid ' + options.borderColor;
+      }
+    } 
 
     var indents = [];
     for (var i = 0; i < this.props.level-1; i++) {
@@ -166,7 +177,7 @@ var TreeNode = React.createClass({displayName: "TreeNode",
 
     var nodeIcon = (
       React.createElement("span", {className: "icon"}, 
-        React.createElement("i", {className: options.nodeIcon})
+        React.createElement("i", {className: node.icon || options.nodeIcon})
       )
     );
 
