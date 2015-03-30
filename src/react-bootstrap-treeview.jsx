@@ -1,4 +1,4 @@
-var Tree = React.createClass({
+var TreeView = React.createClass({
 
   propTypes: {
     levels: React.PropTypes.number,
