@@ -91,13 +91,13 @@ var TreeNode = React.createClass({
   getInitialState: function() {
     var node = this.props.node;
     return {
-      expanded: (node.states && node.states.hasOwnProperty('expanded')) ?
-                  node.states.expanded :
+      expanded: (node.state && node.state.hasOwnProperty('expanded')) ?
+                  node.state.expanded :
                     (this.props.level < this.props.options.levels) ?
                       true :
                       false,
-      selected: (node.states && node.states.hasOwnProperty('selected')) ? 
-                  node.states.selected :
+      selected: (node.state && node.state.hasOwnProperty('selected')) ? 
+                  node.state.selected :
                   false
     }
   },
