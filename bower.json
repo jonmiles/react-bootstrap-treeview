@@ -3,14 +3,19 @@
   "description": "React Tree View for Twitter Bootstrap",
   "version": "1.0.1",
   "homepage": "https://github.com/jonmiles/react-bootstrap-treeview",
-  "main": [],
+  "main": [
+
+  ],
   "keywords": [
     "twitter",
     "bootstrap",
     "tree",
     "treeview",
     "tree-view",
-    "navigation"
+    "navigation",
+    "javascript",
+    "react",
+    "react-component"
   ],
   "ignore": [
     "**/.*",
