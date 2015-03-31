@@ -1,11 +1,18 @@
 module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'), // the package file to use
- 
+
     react: {
-      single_file_output: {
+      conbined_file_output: {
         files: {
-          'public/js/react-bootstrap-treeview.js': 'src/react-bootstrap-treeview.jsx'
+          'dist/react-bootstrap-treeview.js': [
+            'src/js/react-bootstrap-treeview.jsx',
+            'src/js/react-bootstrap-treenode.jsx'
+          ],
+          'public/js/example.js': [
+            'public/js/data.jsx',
+            'public/js/example.jsx'
+          ]
         }
       }
     },
@@ -16,10 +23,10 @@ module.exports = function(grunt) {
     },
 
     copy: {
-      main: { 
+      main: {
         files: [
           // copy src to example
-          { expand: true, cwd: 'src/', src: '*.css', dest: 'public/css/' },
+          { expand: true, cwd: 'src/css', src: '*.css', dest: 'dist/' },
           // { expand: true, cwd: 'src/js', src: '*', dest: 'public/js/' }
         ]
       }

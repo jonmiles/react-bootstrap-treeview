@@ -18,6 +18,7 @@ app.use(express.urlencoded());
 app.use(express.methodOverride());
 app.use(express.static(path.join(__dirname, '/public')));
 app.use(express.static(path.join(__dirname, '/tests')));
+app.use(express.static(path.join(__dirname, '/dist')));
 
 // development only
 if ('development' == app.get('env')) {

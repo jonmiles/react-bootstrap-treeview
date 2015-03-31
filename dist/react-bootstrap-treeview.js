@@ -85,7 +85,6 @@ var TreeView = React.createClass({displayName: "TreeView",
   }
 });
 
-
 var TreeNode = React.createClass({displayName: "TreeNode",
 
   getInitialState: function() {
@@ -96,7 +95,7 @@ var TreeNode = React.createClass({displayName: "TreeNode",
                     (this.props.level < this.props.options.levels) ?
                       true :
                       false,
-      selected: (node.state && node.state.hasOwnProperty('selected')) ? 
+      selected: (node.state && node.state.hasOwnProperty('selected')) ?
                   node.state.selected :
                   false
     }
@@ -120,8 +119,8 @@ var TreeNode = React.createClass({displayName: "TreeNode",
     var style;
     if (!this.props.visible) {
 
-      style = { 
-        display: 'none' 
+      style = {
+        display: 'none'
       };
     }
     else {
@@ -145,7 +144,7 @@ var TreeNode = React.createClass({displayName: "TreeNode",
       else if (options.borderColor) {
         style.border = '1px solid ' + options.borderColor;
       }
-    } 
+    }
 
     var indents = [];
     for (var i = 0; i < this.props.level-1; i++) {

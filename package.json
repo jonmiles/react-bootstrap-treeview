@@ -19,9 +19,7 @@
       "url": "https://github.com/jonmiles/bootstrap-treeview/blob/master/LICENSE"
     }
   ],
-  "main": [
-
-  ],
+  "main": [],
   "scripts": {
     "install": "bower install",
     "start": "node app"
