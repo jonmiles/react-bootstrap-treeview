@@ -10,7 +10,7 @@ module.exports = function(grunt) {
             'src/js/react-bootstrap-treenode.jsx'
           ],
           'public/js/example.js': [
-            'public/js/data.jsx',
+            'public/js/data.js',
             'public/js/example.jsx'
           ]
         }
