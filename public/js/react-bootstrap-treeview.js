@@ -20,7 +20,8 @@ var TreeView = React.createClass({displayName: "TreeView",
         showTags: React.PropTypes.bool,
 
         data: React.PropTypes.arrayOf(React.PropTypes.object),
-        onLineClicked: React.PropTypes.func
+        onLineClicked: React.PropTypes.func,
+        treeNodeAttributes: React.PropTypes.object //ex:{'data-id': a key in this.props.data}
     },
 
 
@@ -45,7 +46,8 @@ var TreeView = React.createClass({displayName: "TreeView",
             showBorder: true,
             showTags: false,
 
-            data: []
+            data: [],
+            treeNodeAttributes: {}
         }
     },
 
@@ -81,7 +83,8 @@ var TreeView = React.createClass({displayName: "TreeView",
                     visible: true, 
                     options: this.props, 
                     key: index, 
-                    onLineClicked: this.handleLineClicked}));
+                    onLineClicked: this.handleLineClicked, 
+                    attributes: this.props.treeNodeAttributes}));
             }.bind(this));
         }
 
@@ -99,7 +102,8 @@ var TreeView = React.createClass({displayName: "TreeView",
 var TreeNode = React.createClass({displayName: "TreeNode",
 
     propTypes: {
-        onLineClicked: React.PropTypes.func
+        onLineClicked: React.PropTypes.func,
+        attributes: React.PropTypes.object
     },
 
     getInitialState: function () {
@@ -140,7 +144,6 @@ var TreeNode = React.createClass({displayName: "TreeNode",
 
         var style;
         if (!this.props.visible) {
-
             style = {
                 display: 'none'
             };
@@ -173,6 +176,15 @@ var TreeNode = React.createClass({displayName: "TreeNode",
             indents.push(React.createElement("span", {
                 className: "indent", 
                 key: i}));
+        }
+
+        var attrs = {};
+        if (this.props.attributes !== undefined) {
+            for( var i in this.props.attributes) {
+                if (node[this.props.attributes[i]] !== undefined) {
+                    attrs[i] = node[this.props.attributes[i]];
+                }
+            };
         }
 
         var expandCollapseIcon;
@@ -239,21 +251,23 @@ var TreeNode = React.createClass({displayName: "TreeNode",
                     visible: this.state.expanded && this.props.visible, 
                     options: options, 
                     key: index, 
-                    onLineClicked: this.props.onLineClicked}));
+                    onLineClicked: this.props.onLineClicked, 
+                    attributes: this.props.attributes}));
             }, this);
         }
 
         return (
-            React.createElement("li", {className: "list-group-item", 
+            React.createElement("li", React.__spread({className: "list-group-item", 
                 style: style, 
                 onClick: this.handleLineClicked.bind(this, node.nodeId), 
                 key: node.nodeId}, 
-        indents, 
-        expandCollapseIcon, 
-        nodeIcon, 
-        nodeText, 
-        badges, 
-        children
+                attrs), 
+            indents, 
+            expandCollapseIcon, 
+            nodeIcon, 
+            nodeText, 
+            badges, 
+            children
             )
         );
     }

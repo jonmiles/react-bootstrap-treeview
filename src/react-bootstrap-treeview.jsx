@@ -20,7 +20,8 @@ var TreeView = React.createClass({
         showTags: React.PropTypes.bool,
 
         data: React.PropTypes.arrayOf(React.PropTypes.object),
-        onLineClicked: React.PropTypes.func
+        onLineClicked: React.PropTypes.func,
+        treeNodeAttributes: React.PropTypes.object //ex:{'data-id': a key in this.props.data}
     },
 
 
@@ -45,7 +46,8 @@ var TreeView = React.createClass({
             showBorder: true,
             showTags: false,
 
-            data: []
+            data: [],
+            treeNodeAttributes: {}
         }
     },
 
@@ -81,7 +83,8 @@ var TreeView = React.createClass({
                     visible={true}
                     options={this.props}
                     key={index}
-                    onLineClicked={this.handleLineClicked}/>);
+                    onLineClicked={this.handleLineClicked}
+                    attributes={this.props.treeNodeAttributes}/>);
             }.bind(this));
         }
 
@@ -99,7 +102,8 @@ var TreeView = React.createClass({
 var TreeNode = React.createClass({
 
     propTypes: {
-        onLineClicked: React.PropTypes.func
+        onLineClicked: React.PropTypes.func,
+        attributes: React.PropTypes.object
     },
 
     getInitialState: function () {
@@ -174,6 +178,15 @@ var TreeNode = React.createClass({
                 key={i}></span>);
         }
 
+        var attrs = {};
+        if (this.props.attributes !== undefined) {
+            for( var i in this.props.attributes) {
+                if (node[this.props.attributes[i]] !== undefined) {
+                    attrs[i] = node[this.props.attributes[i]];
+                }
+            };
+        }
+
         var expandCollapseIcon;
         if (node.nodes) {
             if (!this.state.expanded) {
@@ -238,7 +251,8 @@ var TreeNode = React.createClass({
                     visible={this.state.expanded && this.props.visible}
                     options={options}
                     key={index}
-                    onLineClicked={this.props.onLineClicked}/>);
+                    onLineClicked={this.props.onLineClicked}
+                    attributes={this.props.attributes}/>);
             }, this);
         }
 
@@ -246,13 +260,14 @@ var TreeNode = React.createClass({
             <li className='list-group-item'
                 style={style}
                 onClick={this.handleLineClicked.bind(this, node.nodeId)}
-                key={node.nodeId}>
-        {indents}
-        {expandCollapseIcon}
-        {nodeIcon}
-        {nodeText}
-        {badges}
-        {children}
+                key={node.nodeId}
+                {...attrs}>
+            {indents}
+            {expandCollapseIcon}
+            {nodeIcon}
+            {nodeText}
+            {badges}
+            {children}
             </li>
         );
     }
