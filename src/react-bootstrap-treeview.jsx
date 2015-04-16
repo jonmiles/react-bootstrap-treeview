@@ -140,7 +140,6 @@ var TreeNode = React.createClass({
 
         var style;
         if (!this.props.visible) {
-
             style = {
                 display: 'none'
             };
