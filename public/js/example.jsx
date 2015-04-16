@@ -37,9 +37,9 @@ var test = function () {
 }
 
 React.render(
-    <TreeViewWrapper
+    <TreeView
         data={data}
         color={"#428bca"}
-        handleClick={test}/>,
+        onLineClicked={test}/>,
     document.getElementById('treeview')
 );

@@ -1,38 +1,4 @@
-var TreeViewWrapper = React.createClass({displayName: "TreeViewWrapper",
-
-    propTypes: {
-        handleClick: React.PropTypes.func
-    },
-
-    childContextTypes: {
-        handleClick: React.PropTypes.func
-    },
-
-    getChildContext: function () {
-        return {
-            handleClick: function (evt) {
-                // Dev click listener defined
-                if (this.props.handleClick != undefined) {
-                    this.props.handleClick(jQuery.extend(true, {}, evt));
-                }
-            }.bind(this)
-        }
-    },
-
-    render: function () {
-        return (
-            React.createElement("div", {id: "treeview", className: "treeview"}, 
-                React.createElement(TreeView, React.__spread({},  this.props))
-            )
-        );
-    }
-});
-
 var TreeView = React.createClass({displayName: "TreeView",
-
-    contextTypes: {
-        handleClick: React.PropTypes.func
-    },
 
     propTypes: {
         levels: React.PropTypes.number,
@@ -53,7 +19,8 @@ var TreeView = React.createClass({displayName: "TreeView",
         showBorder: React.PropTypes.bool,
         showTags: React.PropTypes.bool,
 
-        nodes: React.PropTypes.arrayOf(React.PropTypes.number)
+        data: React.PropTypes.arrayOf(React.PropTypes.object),
+        onLineClicked: React.PropTypes.func
     },
 
 
@@ -78,40 +45,51 @@ var TreeView = React.createClass({displayName: "TreeView",
             showBorder: true,
             showTags: false,
 
-            nodes: []
+            data: []
         }
     },
+
+    nodes: [],
 
     setNodeId: function (node) {
 
         if (!node.nodes) return;
 
         node.nodes.forEach(function checkStates(node) {
-            node.nodeId = this.props.nodes.length;
-            this.props.nodes.push(node);
+            node.nodeId = this.nodes.length;
+            this.nodes.push(node);
             this.setNodeId(node);
         }, this);
     },
 
+    handleLineClicked: function (evt) {
+        if (this.props.onLineClicked !== undefined) {
+            // CLONE EVT + CALLBACK DEV
+            this.props.onLineClicked($.extend(true, {}, evt));
+        }
+    },
+
     render: function () {
 
-        this.setNodeId({nodes: data});
+        this.setNodeId({nodes: this.props.data});
 
         var children = [];
-        if (data) {
-            var _this = this;
-            data.forEach(function (node, index) {
+        if (this.props.data) {
+            this.props.data.forEach(function (node, index) {
                 children.push(React.createElement(TreeNode, {node: node, 
                     level: 1, 
                     visible: true, 
-                    options: _this.props, 
-                    key: index}));
-            });
+                    options: this.props, 
+                    key: index, 
+                    onLineClicked: this.handleLineClicked}));
+            }.bind(this));
         }
 
         return (
-            React.createElement("ul", {className: "list-group"}, 
+            React.createElement("div", {className: "treeview"}, 
+                React.createElement("ul", {className: "list-group"}, 
           children
+                )
             )
         );
     }
@@ -120,8 +98,8 @@ var TreeView = React.createClass({displayName: "TreeView",
 
 var TreeNode = React.createClass({displayName: "TreeNode",
 
-    contextTypes: {
-        handleClick: React.PropTypes.func
+    propTypes: {
+        onLineClicked: React.PropTypes.func
     },
 
     getInitialState: function () {
@@ -129,9 +107,7 @@ var TreeNode = React.createClass({displayName: "TreeNode",
         return {
             expanded: (node.state && node.state.hasOwnProperty('expanded')) ?
                 node.state.expanded :
-                (this.props.level < this.props.options.levels) ?
-                    true :
-                    false,
+                (this.props.level < this.props.options.levels),
             selected: (node.state && node.state.hasOwnProperty('selected')) ?
                 node.state.selected :
                 false
@@ -148,12 +124,12 @@ var TreeNode = React.createClass({displayName: "TreeNode",
         event.stopPropagation();
     },
 
-    handleClickTreeNode: function (nodeId, evt) {
+    handleLineClicked: function (nodeId, evt) {
 
         // SELECT LINE
-        this.toggleSelected(nodeId, jQuery.extend(true, {}, evt));
+        this.toggleSelected(nodeId, $.extend(true, {}, evt));
         // DEV CLICK
-        this.context.handleClick(jQuery.extend(true, {}, evt));
+        this.props.onLineClicked($.extend(true, {}, evt));
         evt.stopPropagation();
     },
 
@@ -262,14 +238,15 @@ var TreeNode = React.createClass({displayName: "TreeNode",
                     level: this.props.level + 1, 
                     visible: this.state.expanded && this.props.visible, 
                     options: options, 
-                    key: index}));
+                    key: index, 
+                    onLineClicked: this.props.onLineClicked}));
             }, this);
         }
 
         return (
             React.createElement("li", {className: "list-group-item", 
                 style: style, 
-                onClick: this.handleClickTreeNode.bind(this, node.nodeId), 
+                onClick: this.handleLineClicked.bind(this, node.nodeId), 
                 key: node.nodeId}, 
         indents, 
         expandCollapseIcon, 
