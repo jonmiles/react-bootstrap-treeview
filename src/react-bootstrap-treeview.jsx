@@ -1,3 +1,4 @@
+var React = require('react/addons');
 var TreeView = React.createClass({
 
     propTypes: {
@@ -98,6 +99,7 @@ var TreeView = React.createClass({
     }
 });
 
+module.exports = TreeView;
 
 var TreeNode = React.createClass({
 

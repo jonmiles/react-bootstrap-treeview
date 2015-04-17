@@ -1,3 +1,6 @@
+var React = require('react/addons');
+var TreeView = require('../../src/react-bootstrap-treeview.jsx');
+
 var data = [
     {
         text: 'Parent 1',
@@ -44,11 +47,14 @@ var test = function () {
     console.log('click');
 }
 
-React.render(
-    <TreeView
-        data={data}
-        color={"#428bca"}
-        onLineClicked={test}
-        treeNodeAttributes={{'data-id':'id'}}/>,
-    document.getElementById('treeview')
-);
+// DOM loaded
+$(function () {
+    React.render(
+        <TreeView
+            data={data}
+            color={"#428bca"}
+            onLineClicked={test}
+            treeNodeAttributes={{'data-id': 'id'}}/>,
+        document.getElementById('treeview')
+    );
+})
