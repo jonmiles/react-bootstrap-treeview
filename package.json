@@ -21,7 +21,6 @@
   ],
   "main": "./src/react-bootstrap-treeview.jsx",
   "scripts": {
-    "install": "bower install",
     "start": "node app"
   },
   "engines": {
