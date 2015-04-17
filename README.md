@@ -286,18 +286,19 @@ Boolean.  Default: false
 Whether or not to display tags to the right of each node.  The values of which must be provided in the data structure on a per node basis.
 
 #### treeNodeAttributes
-Object, couples of keys/values ```{key1 : value1, key2 : value2}```
+Object, couples of keys/values ```javascript {key1 : value1, key2 : value2}```
 key: HTML attribute of the node (LI)
 value: Dynamic data computed from this.props. 
 example: 
-``` treeNodeAttributes = {'data-id' : 'id'}  
+```javascript
+    treeNodeAttributes = {'data-id' : 'id'}  
     data = {
                  text: 'Parent 1',
                  id: '1'
              }
  ```
  The node "Parent 1" will have a data-id attribute equals to 1
- ```<li data-id="1" /> Parent 1 </li>```
+ ```html <li data-id="1" /> Parent 1 </li>```
 
 ## Copyright and Licensing
 Copyright 2013 Jonathan Miles
