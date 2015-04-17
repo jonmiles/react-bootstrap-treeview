@@ -58,12 +58,10 @@ Ifyou don't use browserify, include js files in dist folder
 
 ### Example
 
-On example can be run via the commend:
+An example can be run via the command:
 grunt
 
 Files are created in example/public folder.
-
-```
 
 
 ## Data Structure
@@ -264,7 +262,7 @@ String, class name(s).  Default: "glyphicon glyphicon-stop" as defined by [Boots
 
 Sets the default icon to be used on all nodes, except when overridden on a per node basis in data.
 
-### onLineClicked
+#### onLineClicked
 Function, callback call when a line (node) is clicked
 
 #### selectedBackColor
@@ -287,7 +285,7 @@ Boolean.  Default: false
 
 Whether or not to display tags to the right of each node.  The values of which must be provided in the data structure on a per node basis.
 
-### treeNodeAttributes
+#### treeNodeAttributes
 Object, couples of keys, values {key1 : value1, key2 : value2}
 key: HTML attribute od the node (LI)
 value: Dynamic data computed from this.props. 
