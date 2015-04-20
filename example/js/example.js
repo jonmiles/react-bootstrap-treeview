@@ -43,8 +43,9 @@ var data = [
     }
 ];
 
-var test = function () {
-    console.log('click');
+var test = function (evt) {
+
+    console.log('click nodeID ' + $(evt.currentTarget).data('id'));
 }
 
 // DOM loaded
@@ -54,7 +55,9 @@ $(function () {
             data={data}
             color={"#428bca"}
             onLineClicked={test}
-            treeNodeAttributes={{'data-id': 'id'}}/>,
+            treeNodeAttributes={{'data-id': 'id'}}
+            isSelectionExclusive={true}
+            levels={0} />,
         document.getElementById('treeview')
     );
 })

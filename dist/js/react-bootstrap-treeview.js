@@ -17,6 +17,7 @@ var TreeView = React.createClass({displayName: "TreeView",
 
         enableLinks: React.PropTypes.bool,
         highlightSelected: React.PropTypes.bool,
+        isSelectionExclusive: React.PropTypes.bool,
         showBorder: React.PropTypes.bool,
         showTags: React.PropTypes.bool,
 
@@ -44,6 +45,7 @@ var TreeView = React.createClass({displayName: "TreeView",
 
             enableLinks: false,
             highlightSelected: true,
+            isSelectionExclusive: false,
             showBorder: true,
             showTags: false,
 
@@ -53,6 +55,13 @@ var TreeView = React.createClass({displayName: "TreeView",
     },
 
     nodes: [],
+    nodesSelected: {},
+
+    getInitialState: function () {
+        this.setNodeId({nodes: this.props.data});
+
+        return {nodesSelected: this.nodesSelected};
+    },
 
     setNodeId: function (node) {
 
@@ -60,32 +69,56 @@ var TreeView = React.createClass({displayName: "TreeView",
 
         node.nodes.forEach(function checkStates(node) {
             node.nodeId = this.nodes.length;
+            this.nodesSelected[node.nodeId] = false;
             this.nodes.push(node);
             this.setNodeId(node);
         }, this);
     },
 
-    handleLineClicked: function (evt) {
+    /**
+     * Line clicked from TreeNode
+     * @param nodeId: node ID
+     * @param evt: event
+     */
+    handleLineClicked: function (nodeId, evt) {
         if (this.props.onLineClicked !== undefined) {
             // CLONE EVT + CALLBACK DEV
             this.props.onLineClicked($.extend(true, {}, evt));
         }
+
+        var matrice = this.state.nodesSelected;
+        // Exclusive selection
+        if (this.props.isSelectionExclusive) {
+            // Unselection
+            for (var i in matrice) {
+                matrice[i] = false;
+            }
+        }
+        // TOGGLE SELECTION OF CURRENT NODE
+        matrice[nodeId] = !this.state.nodesSelected[nodeId];
+
+        this.setState({nodesSelected: matrice});
     },
 
     render: function () {
 
-        this.setNodeId({nodes: this.props.data});
-
         var children = [];
         if (this.props.data) {
             this.props.data.forEach(function (node, index) {
-                children.push(React.createElement(TreeNode, {node: node, 
-                    level: 1, 
-                    visible: true, 
-                    options: this.props, 
-                    key: index, 
-                    onLineClicked: this.handleLineClicked, 
-                    attributes: this.props.treeNodeAttributes}));
+
+                // SELECTION
+                node.selected = (this.state.nodesSelected[node.nodeId]);
+
+                children.push(
+                    React.createElement(TreeNode, {
+                        node: node, 
+                        level: 1, 
+                        visible: true, 
+                        options: this.props, 
+                        key: index, 
+                        onLineClicked: this.handleLineClicked, 
+                        attributes: this.props.treeNodeAttributes, 
+                        nodesSelected: this.state.nodesSelected}));
             }.bind(this));
         }
 
@@ -104,8 +137,10 @@ module.exports = TreeView;
 var TreeNode = React.createClass({displayName: "TreeNode",
 
     propTypes: {
+        node: React.PropTypes.object.isRequired,
         onLineClicked: React.PropTypes.func,
-        attributes: React.PropTypes.object
+        attributes: React.PropTypes.object,
+        nodesSelected: React.PropTypes.object.isRequired
     },
 
     getInitialState: function () {
@@ -120,13 +155,21 @@ var TreeNode = React.createClass({displayName: "TreeNode",
         }
     },
 
+    componentWillUpdate: function (np, ns) {
+        ns.selected = np.node.selected;
+
+    },
+
     toggleExpanded: function (id, event) {
         this.setState({expanded: !this.state.expanded});
         event.stopPropagation();
     },
 
     toggleSelected: function (id, event) {
-        this.setState({selected: !this.state.selected});
+        // Exclusive selection
+        if (!this.props.isSelectionExclusive) {
+            this.setState({selected: !this.state.selected});
+        }
         event.stopPropagation();
     },
 
@@ -135,7 +178,7 @@ var TreeNode = React.createClass({displayName: "TreeNode",
         // SELECT LINE
         this.toggleSelected(nodeId, $.extend(true, {}, evt));
         // DEV CLICK
-        this.props.onLineClicked($.extend(true, {}, evt));
+        this.props.onLineClicked(nodeId, $.extend(true, {}, evt));
         evt.stopPropagation();
     },
 
@@ -182,11 +225,12 @@ var TreeNode = React.createClass({displayName: "TreeNode",
 
         var attrs = {};
         if (this.props.attributes !== undefined) {
-            for( var i in this.props.attributes) {
+            for (var i in this.props.attributes) {
                 if (node[this.props.attributes[i]] !== undefined) {
                     attrs[i] = node[this.props.attributes[i]];
                 }
-            };
+            }
+            ;
         }
 
         var expandCollapseIcon;
@@ -248,13 +292,18 @@ var TreeNode = React.createClass({displayName: "TreeNode",
         var children = [];
         if (node.nodes) {
             node.nodes.forEach(function (node, index) {
-                children.push(React.createElement(TreeNode, {node: node, 
-                    level: this.props.level + 1, 
-                    visible: this.state.expanded && this.props.visible, 
-                    options: options, 
-                    key: index, 
-                    onLineClicked: this.props.onLineClicked, 
-                    attributes: this.props.attributes}));
+                // SELECTION
+                node.selected = (this.props.nodesSelected[node.nodeId]);
+                children.push(
+                    React.createElement(TreeNode, {
+                        node: node, 
+                        level: this.props.level + 1, 
+                        visible: this.state.expanded && this.props.visible, 
+                        options: options, 
+                        key: index, 
+                        onLineClicked: this.props.onLineClicked, 
+                        attributes: this.props.attributes, 
+                        nodesSelected: this.props.nodesSelected}));
             }, this);
         }
 
