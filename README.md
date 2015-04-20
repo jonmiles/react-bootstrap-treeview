@@ -252,6 +252,12 @@ Boolean.  Default: true
 
 Whether or not to highlight the selected node.
 
+#### isSelectionExclusive
+Boolean, Default false
+
+If true, when a line is selected, others are unselected
+
+
 #### levels
 Integer. Default: 2
 
