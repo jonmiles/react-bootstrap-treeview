@@ -311,7 +311,6 @@ var TreeNode = React.createClass({
             <li className='list-group-item'
                 style={style}
                 onClick={this.handleLineClicked.bind(this, node.nodeId)}
-                key={node.nodeId}
                 {...attrs}>
             {indents}
             {expandCollapseIcon}
