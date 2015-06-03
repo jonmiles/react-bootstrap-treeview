@@ -5,6 +5,7 @@ var data = [
     {
         text: 'Parent 1',
         id: '1',
+        href: '#',
         nodes: [
             {
                 text: 'Child 1',
@@ -57,7 +58,14 @@ $(function () {
             onLineClicked={test}
             treeNodeAttributes={{'data-id': 'id'}}
             isSelectionExclusive={true}
-            levels={0} />,
+            levels={0}
+            nodeIcon= "glyphicon glyphicon-stop small"
+            enableLinks={false}
+            expandIcon= "glyphicon glyphicon-plus small"
+            collapseIcon= "glyphicon glyphicon-minus small"
+            classText="small"
+            showTags={true}
+            />,
         document.getElementById('treeview')
     );
 })

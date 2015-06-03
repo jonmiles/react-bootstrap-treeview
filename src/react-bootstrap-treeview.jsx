@@ -33,7 +33,7 @@ var TreeView = React.createClass({
 
             expandIcon: 'glyphicon glyphicon-plus',
             collapseIcon: 'glyphicon glyphicon-minus',
-            emptyIcon: 'glyphicon',
+            emptyIcon: '',
             nodeIcon: 'glyphicon glyphicon-stop',
 
             color: undefined,
@@ -42,6 +42,7 @@ var TreeView = React.createClass({
             onhoverColor: '#F5F5F5', // TODO Not implemented yet, investigate radium.js 'A toolchain for React component styling'
             selectedColor: '#FFFFFF',
             selectedBackColor: '#428bca',
+            classText: '',
 
             enableLinks: false,
             highlightSelected: true,
@@ -140,7 +141,8 @@ var TreeNode = React.createClass({
         node: React.PropTypes.object.isRequired,
         onLineClicked: React.PropTypes.func,
         attributes: React.PropTypes.object,
-        nodesSelected: React.PropTypes.object.isRequired
+        nodesSelected: React.PropTypes.object.isRequired,
+        options: React.PropTypes.object
     },
 
     getInitialState: function () {
@@ -187,12 +189,14 @@ var TreeNode = React.createClass({
         var node = this.props.node;
         var options = this.props.options;
 
+        // Noeud invisible
         var style;
         if (!this.props.visible) {
             style = {
                 display: 'none'
             };
         }
+        // Noeud visible
         else {
 
             if (options.highlightSelected && this.state.selected) {
@@ -216,6 +220,7 @@ var TreeNode = React.createClass({
             }
         }
 
+        // Indentation
         var indents = [];
         for (var i = 0; i < this.props.level - 1; i++) {
             indents.push(<span
@@ -223,6 +228,7 @@ var TreeNode = React.createClass({
                 key={i}></span>);
         }
 
+        // Custom attributes
         var attrs = {};
         if (this.props.attributes !== undefined) {
             for (var i in this.props.attributes) {
@@ -234,18 +240,24 @@ var TreeNode = React.createClass({
         }
 
         var expandCollapseIcon;
+        // There are children
         if (node.nodes) {
+            // Collapse
             if (!this.state.expanded) {
                 expandCollapseIcon = (
-                    <span className={options.expandIcon}
-                        onClick={this.toggleExpanded.bind(this, node.nodeId)}>
+                    <span className="icon plusmoins">
+                        <i className = {options.expandIcon}
+                            onClick={this.toggleExpanded.bind(this, node.nodeId)}>
+                        </i>
                     </span>
                 );
             }
+            // Expanded
             else {
                 expandCollapseIcon = (
-                    <span className={options.collapseIcon}
-                        onClick={this.toggleExpanded.bind(this, node.nodeId)}>
+                    <span className="icon">
+                        <i className={options.collapseIcon}
+                            onClick={this.toggleExpanded.bind(this, node.nodeId)}/>
                     </span>
                 );
             }
@@ -256,37 +268,59 @@ var TreeNode = React.createClass({
             );
         }
 
-        var nodeIcon = (
-            <span className='icon'>
-                <i className={node.icon || options.nodeIcon}></i>
-            </span>
-        );
-
-        var nodeText;
-        if (options.enableLinks) {
-            nodeText = (
-                <a href={node.href} /*style="color:inherit;"*/>
-          {node.text}
-                </a>
-            );
-        }
-        else {
-            nodeText = (
-                <span>{node.text}</span>
+        // Icon (if no nodes children)
+        var nodeIcon = '';
+        if (options.nodeIcon !== '' && !node.nodes) {
+            nodeIcon = (
+                <span className='icon'>
+                    <i className={node.icon || options.nodeIcon}></i>
+                </span>
             );
         }
 
         var badges;
-        if (options.showTags && node.tags) {
-            badges = node.tags.map(function (tag, index) {
-                return (
+        if (options.showTags) {
+            // If tags are defined in the data
+            if (node.tags) {
+                badges = node.tags.map(function (tag, index) {
+                    return (
+                        <span
+                            className='badge'
+                            key={index}>
+                        {tag}
+                        </span>
+                    );
+                });
+            }
+            // No tags in data => number of children
+            else {
+                badges = (
                     <span
-                        className='badge'
-                        key={index}>
-                    {tag}
+                        className='badge'>
+                    {node.nodes ? node.nodes.length : 0}
                     </span>
                 );
-            });
+            }
+        }
+
+        var nodeText;
+        if (options.enableLinks) {
+            nodeText = (
+                <span
+                    className = {options.classText}>
+                    <a href={node.href} /*style="color:inherit;"*/>
+                        {node.text}
+                    </a>
+                </span>
+            );
+        }
+        else {
+            nodeText = (
+            <span
+                className = {options.classText}>
+                {node.text}
+            </span>
+            );
         }
 
         var children = [];
@@ -316,7 +350,7 @@ var TreeNode = React.createClass({
             {expandCollapseIcon}
             {nodeIcon}
             {nodeText}
-            {badges}
+                {badges}
             {children}
             </li>
         );

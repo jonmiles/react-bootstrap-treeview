@@ -33,7 +33,7 @@ var TreeView = React.createClass({displayName: "TreeView",
 
             expandIcon: 'glyphicon glyphicon-plus',
             collapseIcon: 'glyphicon glyphicon-minus',
-            emptyIcon: 'glyphicon',
+            emptyIcon: '',
             nodeIcon: 'glyphicon glyphicon-stop',
 
             color: undefined,
@@ -42,6 +42,7 @@ var TreeView = React.createClass({displayName: "TreeView",
             onhoverColor: '#F5F5F5', // TODO Not implemented yet, investigate radium.js 'A toolchain for React component styling'
             selectedColor: '#FFFFFF',
             selectedBackColor: '#428bca',
+            classText: '',
 
             enableLinks: false,
             highlightSelected: true,
@@ -140,7 +141,8 @@ var TreeNode = React.createClass({displayName: "TreeNode",
         node: React.PropTypes.object.isRequired,
         onLineClicked: React.PropTypes.func,
         attributes: React.PropTypes.object,
-        nodesSelected: React.PropTypes.object.isRequired
+        nodesSelected: React.PropTypes.object.isRequired,
+        options: React.PropTypes.object
     },
 
     getInitialState: function () {
@@ -187,12 +189,14 @@ var TreeNode = React.createClass({displayName: "TreeNode",
         var node = this.props.node;
         var options = this.props.options;
 
+        // Noeud invisible
         var style;
         if (!this.props.visible) {
             style = {
                 display: 'none'
             };
         }
+        // Noeud visible
         else {
 
             if (options.highlightSelected && this.state.selected) {
@@ -216,6 +220,7 @@ var TreeNode = React.createClass({displayName: "TreeNode",
             }
         }
 
+        // Indentation
         var indents = [];
         for (var i = 0; i < this.props.level - 1; i++) {
             indents.push(React.createElement("span", {
@@ -223,6 +228,7 @@ var TreeNode = React.createClass({displayName: "TreeNode",
                 key: i}));
         }
 
+        // Custom attributes
         var attrs = {};
         if (this.props.attributes !== undefined) {
             for (var i in this.props.attributes) {
@@ -234,18 +240,24 @@ var TreeNode = React.createClass({displayName: "TreeNode",
         }
 
         var expandCollapseIcon;
+        // There are children
         if (node.nodes) {
+            // Collapse
             if (!this.state.expanded) {
                 expandCollapseIcon = (
-                    React.createElement("span", {className: options.expandIcon, 
-                        onClick: this.toggleExpanded.bind(this, node.nodeId)}
+                    React.createElement("span", {className: "icon plusmoins"}, 
+                        React.createElement("i", {className: options.expandIcon, 
+                            onClick: this.toggleExpanded.bind(this, node.nodeId)}
+                        )
                     )
                 );
             }
+            // Expanded
             else {
                 expandCollapseIcon = (
-                    React.createElement("span", {className: options.collapseIcon, 
-                        onClick: this.toggleExpanded.bind(this, node.nodeId)}
+                    React.createElement("span", {className: "icon"}, 
+                        React.createElement("i", {className: options.collapseIcon, 
+                            onClick: this.toggleExpanded.bind(this, node.nodeId)})
                     )
                 );
             }
@@ -256,37 +268,59 @@ var TreeNode = React.createClass({displayName: "TreeNode",
             );
         }
 
-        var nodeIcon = (
-            React.createElement("span", {className: "icon"}, 
-                React.createElement("i", {className: node.icon || options.nodeIcon})
-            )
-        );
+        // Icon (if no nodes children)
+        var nodeIcon = '';
+        if (options.nodeIcon !== '' && !node.nodes) {
+            nodeIcon = (
+                React.createElement("span", {className: "icon"}, 
+                    React.createElement("i", {className: node.icon || options.nodeIcon})
+                )
+            );
+        }
+
+        var badges;
+        if (options.showTags) {
+            // If tags are defined in the data
+            if (node.tags) {
+                badges = node.tags.map(function (tag, index) {
+                    return (
+                        React.createElement("span", {
+                            className: "badge", 
+                            key: index}, 
+                        tag
+                        )
+                    );
+                });
+            }
+            // No tags in data => number of children
+            else {
+                badges = (
+                    React.createElement("span", {
+                        className: "badge"}, 
+                    node.nodes ? node.nodes.length : 0
+                    )
+                );
+            }
+        }
 
         var nodeText;
         if (options.enableLinks) {
             nodeText = (
-                React.createElement("a", {href: node.href/*style="color:inherit;"*/}, 
-          node.text
+                React.createElement("span", {
+                    className: options.classText}, 
+                    React.createElement("a", {href: node.href/*style="color:inherit;"*/}, 
+                        node.text
+                    )
                 )
             );
         }
         else {
             nodeText = (
-                React.createElement("span", null, node.text)
+            React.createElement("span", {
+                className: options.classText}, 
+                node.text
+            )
             );
-        }
-
-        var badges;
-        if (options.showTags && node.tags) {
-            badges = node.tags.map(function (tag, index) {
-                return (
-                    React.createElement("span", {
-                        className: "badge", 
-                        key: index}, 
-                    tag
-                    )
-                );
-            });
         }
 
         var children = [];
@@ -316,7 +350,7 @@ var TreeNode = React.createClass({displayName: "TreeNode",
             expandCollapseIcon, 
             nodeIcon, 
             nodeText, 
-            badges, 
+                badges, 
             children
             )
         );
