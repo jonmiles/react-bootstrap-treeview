@@ -18,6 +18,7 @@ var TreeView = React.createClass({displayName: "TreeView",
         enableLinks: React.PropTypes.bool,
         highlightSelected: React.PropTypes.bool,
         isSelectionExclusive: React.PropTypes.bool,
+        underlineLeafOnly: React.PropTypes.bool,
         showBorder: React.PropTypes.bool,
         showTags: React.PropTypes.bool,
 
@@ -47,6 +48,7 @@ var TreeView = React.createClass({displayName: "TreeView",
             enableLinks: false,
             highlightSelected: true,
             isSelectionExclusive: false,
+            underlineLeafOnly: false,
             showBorder: true,
             showTags: false,
 
@@ -278,7 +280,7 @@ var TreeNode = React.createClass({displayName: "TreeNode",
             );
         }
 
-        var badges;
+        var badges = '';
         if (options.showTags) {
             // If tags are defined in the data
             if (node.tags) {
@@ -294,12 +296,15 @@ var TreeNode = React.createClass({displayName: "TreeNode",
             }
             // No tags in data => number of children
             else {
-                badges = (
-                    React.createElement("span", {
-                        className: "badge"}, 
-                    node.nodes ? node.nodes.length : 0
-                    )
-                );
+                // Children exist
+                if(node.nodes) {
+                    badges = (
+                        React.createElement("span", {
+                            className: "badge"}, 
+                        node.nodes.length
+                        )
+                    );
+                }
             }
         }
 
