@@ -46,7 +46,7 @@ var data = [
 
 var test = function (evt) {
 
-    console.log('click nodeID ' + $(evt.currentTarget).data('id'));
+    //console.log('click nodeID ' + $(evt.currentTarget).data('id'));
 }
 
 // DOM loaded
@@ -58,8 +58,10 @@ $(function () {
             onLineClicked={test}
             treeNodeAttributes={{'data-id': 'id'}}
             isSelectionExclusive={true}
+            underlineLeafOnly={true}
             levels={0}
-            nodeIcon= "glyphicon glyphicon-stop small"
+            nodeIcon= "glyphicon glyphicon-eye-close"
+            nodeIconSelected= "glyphicon glyphicon-eye-open"
             enableLinks={false}
             expandIcon= "glyphicon glyphicon-plus small"
             collapseIcon= "glyphicon glyphicon-minus small"

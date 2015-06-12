@@ -7,6 +7,7 @@ var TreeView = React.createClass({displayName: "TreeView",
         collapseIcon: React.PropTypes.string,
         emptyIcon: React.PropTypes.string,
         nodeIcon: React.PropTypes.string,
+        nodeIconSelected: React.PropTypes.string,
 
         color: React.PropTypes.string,
         backColor: React.PropTypes.string,
@@ -36,7 +37,7 @@ var TreeView = React.createClass({displayName: "TreeView",
             collapseIcon: 'glyphicon glyphicon-minus',
             emptyIcon: '',
             nodeIcon: 'glyphicon glyphicon-stop',
-
+            nodeIconSelected: 'glyphicon glyphicon-eye-open',
             color: undefined,
             backColor: undefined,
             borderColor: undefined,
@@ -79,6 +80,22 @@ var TreeView = React.createClass({displayName: "TreeView",
     },
 
     /**
+     * Find a node by nodeId
+     * @param nodeId: node ID
+     * @returns {{}} node object or {}
+     */
+    findNode: function (nodeId) {
+        var find = {};
+        this.nodes.forEach(function (node) {
+            // Node find
+            if (node.nodeId == nodeId) {
+                find = node;
+            }
+        });
+        return find;
+    },
+
+    /**
      * Line clicked from TreeNode
      * @param nodeId: node ID
      * @param evt: event
@@ -92,13 +109,40 @@ var TreeView = React.createClass({displayName: "TreeView",
         var matrice = this.state.nodesSelected;
         // Exclusive selection
         if (this.props.isSelectionExclusive) {
-            // Unselection
-            for (var i in matrice) {
-                matrice[i] = false;
+
+            // Underline only if the element is a leaf
+            if (this.props.underlineLeafOnly) {
+                var currentNode = this.findNode(nodeId);
+
+                // Node clicked is a leaf
+                if (!currentNode.nodes) {
+                    // Unselection
+                    for (var i in matrice) {
+                        matrice[i] = false;
+                    }
+                    matrice[nodeId] = !this.state.nodesSelected[nodeId];
+                }
+                // Node clicked is a parentNode
+                else {
+                    // Simulation click expand/collapse icon
+                    $(evt.currentTarget).find('[data-target=plusmoins]').click();
+                }
+            }
+            // Underline on all nodes
+            else {
+                // Unselection
+                for (var i in matrice) {
+                    matrice[i] = false;
+                }
+                // TOGGLE SELECTION OF CURRENT NODE
+                matrice[nodeId] = !this.state.nodesSelected[nodeId];
             }
         }
-        // TOGGLE SELECTION OF CURRENT NODE
-        matrice[nodeId] = !this.state.nodesSelected[nodeId];
+        // MULTIPLE SELECTION
+        else {
+            // TOGGLE SELECTION OF CURRENT NODE
+            matrice[nodeId] = !this.state.nodesSelected[nodeId];
+        }
 
         this.setState({nodesSelected: matrice});
     },
@@ -248,9 +292,10 @@ var TreeNode = React.createClass({displayName: "TreeNode",
             if (!this.state.expanded) {
                 expandCollapseIcon = (
                     React.createElement("span", {className: "icon plusmoins"}, 
-                        React.createElement("i", {className: options.expandIcon, 
-                            onClick: this.toggleExpanded.bind(this, node.nodeId)}
-                        )
+                        React.createElement("i", {
+                            className: options.expandIcon, 
+                            onClick: this.toggleExpanded.bind(this, node.nodeId), 
+                            "data-target": "plusmoins"})
                     )
                 );
             }
@@ -258,24 +303,33 @@ var TreeNode = React.createClass({displayName: "TreeNode",
             else {
                 expandCollapseIcon = (
                     React.createElement("span", {className: "icon"}, 
-                        React.createElement("i", {className: options.collapseIcon, 
-                            onClick: this.toggleExpanded.bind(this, node.nodeId)})
+                        React.createElement("i", {
+                            className: options.collapseIcon, 
+                            onClick: this.toggleExpanded.bind(this, node.nodeId), 
+                            "data-target": "plusmoins"})
                     )
                 );
             }
         }
+        // Node is a leaf
         else {
             expandCollapseIcon = (
                 React.createElement("span", {className: options.emptyIcon})
             );
         }
 
-        // Icon (if no nodes children)
+        // Icon (if current node is a leaf)
         var nodeIcon = '';
         if (options.nodeIcon !== '' && !node.nodes) {
+            console.log('node %o %o %o',node, this.state.selected, options);
+            var iTarget = (React.createElement("i", {className: node.icon || options.nodeIcon}));
+            // Current node selected
+            if (this.state.selected) {
+                iTarget = (React.createElement("i", {className: options.nodeIconSelected}))
+            }
             nodeIcon = (
                 React.createElement("span", {className: "icon"}, 
-                    React.createElement("i", {className: node.icon || options.nodeIcon})
+                    iTarget
                 )
             );
         }
@@ -297,7 +351,7 @@ var TreeNode = React.createClass({displayName: "TreeNode",
             // No tags in data => number of children
             else {
                 // Children exist
-                if(node.nodes) {
+                if (node.nodes) {
                     badges = (
                         React.createElement("span", {
                             className: "badge"}, 
@@ -321,10 +375,10 @@ var TreeNode = React.createClass({displayName: "TreeNode",
         }
         else {
             nodeText = (
-            React.createElement("span", {
-                className: options.classText}, 
+                React.createElement("span", {
+                    className: options.classText}, 
                 node.text
-            )
+                )
             );
         }
 
