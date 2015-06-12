@@ -321,7 +321,7 @@ var TreeNode = React.createClass({displayName: "TreeNode",
         // Icon (if current node is a leaf)
         var nodeIcon = '';
         if (options.nodeIcon !== '' && !node.nodes) {
-            console.log('node %o %o %o',node, this.state.selected, options);
+            //console.log('node %o %o %o',node, this.state.selected, options);
             var iTarget = (React.createElement("i", {className: node.icon || options.nodeIcon}));
             // Current node selected
             if (this.state.selected) {
