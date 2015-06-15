@@ -38,12 +38,10 @@ Include the correct styles, it's mainly just bootstrap but we add a few tweaks a
 <link href="path/to/react-bootstrap-treeview.css" rel="stylesheet">
 ```
 
-Add required libraries.
+Require the commonJS TreeView
 
-```html
-<!-- Required JavaScript -->
-<script src="path/to/react.js"></script>
-<script src="path/to/react-bootstrap-tree.js"></script>
+```js
+var TreeView = require('react-bootstrap-treeview');
 ```
 
 Then, a basic initialization would look like.
@@ -55,37 +53,15 @@ React.render(
 );
 ```
 
+Ifyou don't use browserify, include js files in dist folder
+<script src="path/to/react-bootstrap-treeview.js"></script>
+
 ### Example
 
-Putting it all together a minimal implementation might look like this.
+An example can be run via the command:
+grunt
 
-```html
-<html>
-  <head>
-    <title>React + Bootstrap Tree View</title>
-    <link href="path/to/bootstrap.css" rel="stylesheet">
-    <link href="path/to/react-bootstrap-treeview.css" rel="stylesheet">
-  </head>
-  <body>
-    <div class="container">
-      <h1>React + Bootstrap Tree View</h1>
-      <br/>
-      <div class="row">
-        <div id="treeview"></div>
-      </div>
-    </div>
-    <script src="path/to/react.js"></script>
-    <script src="path/to/JSXTransformer.js"></script>
-    <script src="path/to/react-bootstrap-treeview.js"></script>
-    <script type="text/jsx">
-    	React.render(
-				<TreeView data={data} />,
-				document.getElementById('treeview')
-			);
-    </script>
-  </body>
-</html>
-```
+Files are created in example/public folder.
 
 
 ## Data Structure
@@ -276,6 +252,12 @@ Boolean.  Default: true
 
 Whether or not to highlight the selected node.
 
+#### isSelectionExclusive
+Boolean, Default false
+
+If true, when a line is selected, others are unselected
+
+
 #### levels
 Integer. Default: 2
 
@@ -285,6 +267,9 @@ Sets the number of hierarchical levels deep the tree will be expanded to by defa
 String, class name(s).  Default: "glyphicon glyphicon-stop" as defined by [Bootstrap Glyphicons](http://getbootstrap.com/components/#glyphicons)
 
 Sets the default icon to be used on all nodes, except when overridden on a per node basis in data.
+
+#### onLineClicked
+Function, callback call when a line (node) is clicked
 
 #### selectedBackColor
 String, [any legal color value](http://www.w3schools.com/cssref/css_colors_legal.asp).  Default: '#428bca'.
@@ -306,7 +291,23 @@ Boolean.  Default: false
 
 Whether or not to display tags to the right of each node.  The values of which must be provided in the data structure on a per node basis.
 
+#### treeNodeAttributes
+Object, couples of keys/values ```{key1 : value1, key2 : value2}```
 
+*key:* HTML attribute of the node ```<li>```
+
+*value:* Dynamic data computed from this.props.data
+
+example: 
+```javascript
+    treeNodeAttributes = {'data-foo' : 'bar'}  
+    data = {
+                 text: 'Parent 1',
+                 bar: '1'
+            }
+ ```
+ The node "Parent 1" will have a data-id attribute equals to 1
+ ```html <li data-foo="1" /> Parent 1 </li>```
 
 ## Copyright and Licensing
 Copyright 2013 Jonathan Miles

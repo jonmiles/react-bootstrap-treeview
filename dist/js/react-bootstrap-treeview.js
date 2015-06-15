@@ -1,5 +1,5 @@
 var React = require('react/addons');
-var TreeView = React.createClass({
+var TreeView = React.createClass({displayName: "TreeView",
 
     propTypes: {
         levels: React.PropTypes.number,
@@ -157,31 +157,31 @@ var TreeView = React.createClass({
                 node.selected = (this.state.nodesSelected[node.nodeId]);
 
                 children.push(
-                    <TreeNode
-                        node={node}
-                        level={1}
-                        visible={true}
-                        options={this.props}
-                        key={node.nodeId}
-                        onLineClicked={this.handleLineClicked}
-                        attributes={this.props.treeNodeAttributes}
-                        nodesSelected={this.state.nodesSelected} />);
+                    React.createElement(TreeNode, {
+                        node: node, 
+                        level: 1, 
+                        visible: true, 
+                        options: this.props, 
+                        key: node.nodeId, 
+                        onLineClicked: this.handleLineClicked, 
+                        attributes: this.props.treeNodeAttributes, 
+                        nodesSelected: this.state.nodesSelected}));
             }.bind(this));
         }
 
         return (
-            <div className='treeview'>
-                <ul className='list-group'>
-          {children}
-                </ul>
-            </div>
+            React.createElement("div", {className: "treeview"}, 
+                React.createElement("ul", {className: "list-group"}, 
+          children
+                )
+            )
         );
     }
 });
 
 module.exports = TreeView;
 
-var TreeNode = React.createClass({
+var TreeNode = React.createClass({displayName: "TreeNode",
 
     propTypes: {
         node: React.PropTypes.object.isRequired,
@@ -269,9 +269,9 @@ var TreeNode = React.createClass({
         // Indentation
         var indents = [];
         for (var i = 0; i < this.props.level - 1; i++) {
-            indents.push(<span
-                className='indent'
-                key={i}></span>);
+            indents.push(React.createElement("span", {
+                className: "indent", 
+                key: i}));
         }
 
         // Custom attributes
@@ -291,30 +291,30 @@ var TreeNode = React.createClass({
             // Collapse
             if (!this.state.expanded) {
                 expandCollapseIcon = (
-                    <span className="icon plusmoins">
-                        <i
-                            className = {options.expandIcon}
-                            onClick={this.toggleExpanded.bind(this, node.nodeId)}
-                            data-target = "plusmoins"/>
-                    </span>
+                    React.createElement("span", {className: "icon plusmoins"}, 
+                        React.createElement("i", {
+                            className: options.expandIcon, 
+                            onClick: this.toggleExpanded.bind(this, node.nodeId), 
+                            "data-target": "plusmoins"})
+                    )
                 );
             }
             // Expanded
             else {
                 expandCollapseIcon = (
-                    <span className="icon">
-                        <i
-                            className={options.collapseIcon}
-                            onClick={this.toggleExpanded.bind(this, node.nodeId)}
-                            data-target = "plusmoins"/>
-                    </span>
+                    React.createElement("span", {className: "icon"}, 
+                        React.createElement("i", {
+                            className: options.collapseIcon, 
+                            onClick: this.toggleExpanded.bind(this, node.nodeId), 
+                            "data-target": "plusmoins"})
+                    )
                 );
             }
         }
         // Node is a leaf
         else {
             expandCollapseIcon = (
-                <span className={options.emptyIcon}></span>
+                React.createElement("span", {className: options.emptyIcon})
             );
         }
 
@@ -322,15 +322,15 @@ var TreeNode = React.createClass({
         var nodeIcon = '';
         if (options.nodeIcon !== '' && !node.nodes) {
             //console.log('node %o %o %o',node, this.state.selected, options);
-            var iTarget = (<i className={node.icon || options.nodeIcon}></i>);
+            var iTarget = (React.createElement("i", {className: node.icon || options.nodeIcon}));
             // Current node selected
             if (this.state.selected) {
-                iTarget = (<i className={options.nodeIconSelected}></i>)
+                iTarget = (React.createElement("i", {className: options.nodeIconSelected}))
             }
             nodeIcon = (
-                <span className='icon'>
-                    {iTarget}
-                </span>
+                React.createElement("span", {className: "icon"}, 
+                    iTarget
+                )
             );
         }
 
@@ -340,11 +340,11 @@ var TreeNode = React.createClass({
             if (node.tags) {
                 badges = node.tags.map(function (tag, index) {
                     return (
-                        <span
-                            className='badge'
-                            key={index}>
-                        {tag}
-                        </span>
+                        React.createElement("span", {
+                            className: "badge", 
+                            key: index}, 
+                        tag
+                        )
                     );
                 });
             }
@@ -353,10 +353,10 @@ var TreeNode = React.createClass({
                 // Children exist
                 if (node.nodes) {
                     badges = (
-                        <span
-                            className='badge'>
-                        {node.nodes.length}
-                        </span>
+                        React.createElement("span", {
+                            className: "badge"}, 
+                        node.nodes.length
+                        )
                     );
                 }
             }
@@ -365,20 +365,20 @@ var TreeNode = React.createClass({
         var nodeText;
         if (options.enableLinks) {
             nodeText = (
-                <span
-                    className = {options.classText}>
-                    <a href={node.href} /*style="color:inherit;"*/>
-                        {node.text}
-                    </a>
-                </span>
+                React.createElement("span", {
+                    className: options.classText}, 
+                    React.createElement("a", {href: node.href/*style="color:inherit;"*/}, 
+                        node.text
+                    )
+                )
             );
         }
         else {
             nodeText = (
-                <span
-                    className = {options.classText}>
-                {node.text}
-                </span>
+                React.createElement("span", {
+                    className: options.classText}, 
+                node.text
+                )
             );
         }
 
@@ -388,30 +388,30 @@ var TreeNode = React.createClass({
                 // SELECTION
                 node.selected = (this.props.nodesSelected[node.nodeId]);
                 children.push(
-                    <TreeNode
-                        node={node}
-                        level={this.props.level + 1}
-                        visible={this.state.expanded && this.props.visible}
-                        options={options}
-                        key={node.nodeId}
-                        onLineClicked={this.props.onLineClicked}
-                        attributes={this.props.attributes}
-                        nodesSelected={this.props.nodesSelected} />);
+                    React.createElement(TreeNode, {
+                        node: node, 
+                        level: this.props.level + 1, 
+                        visible: this.state.expanded && this.props.visible, 
+                        options: options, 
+                        key: node.nodeId, 
+                        onLineClicked: this.props.onLineClicked, 
+                        attributes: this.props.attributes, 
+                        nodesSelected: this.props.nodesSelected}));
             }, this);
         }
 
         return (
-            <li className='list-group-item'
-                style={style}
-                onClick={this.handleLineClicked.bind(this, node.nodeId)}
-                {...attrs}>
-            {indents}
-            {expandCollapseIcon}
-            {nodeIcon}
-            {nodeText}
-                {badges}
-            {children}
-            </li>
+            React.createElement("li", React.__spread({className: "list-group-item", 
+                style: style, 
+                onClick: this.handleLineClicked.bind(this, node.nodeId)}, 
+                attrs), 
+            indents, 
+            expandCollapseIcon, 
+            nodeIcon, 
+            nodeText, 
+                badges, 
+            children
+            )
         );
     }
 });

@@ -1,10 +1,10 @@
 {
   "name": "react-bootstrap-treeview",
   "description": "React Tree View for Twitter Bootstrap",
-  "version": "0.1.0",
+  "version": "0.2.6",
   "homepage": "https://github.com/jonmiles/react-bootstrap-treeview",
   "author": {
-    "name": "Jonathan Miles"
+    "name": "Elipce"
   },
   "repository": {
     "type": "git",
@@ -19,25 +19,27 @@
       "url": "https://github.com/jonmiles/bootstrap-treeview/blob/master/LICENSE"
     }
   ],
-  "main": [
-
-  ],
+  "main": "./src/react-bootstrap-treeview.jsx",
   "scripts": {
-    "install": "bower install",
     "start": "node app"
   },
   "engines": {
     "node": ">= 0.10.0"
   },
   "dependencies": {
-    "express": "3.4.4"
+    "express": "3.4.4",
+    "react": "^0.13.1"
   },
   "devDependencies": {
     "bower": "1.3.x",
+    "browserify": "^9.0.8",
     "grunt": "0.4.x",
-    "grunt-react": "~0.12.0",
+    "grunt-browserify": "^3.7.0",
+    "grunt-contrib-copy": "~0.8.0",
     "grunt-contrib-watch": "~0.6.1",
-    "grunt-contrib-copy": "~0.8.0"
+    "grunt-react": "~0.12.0",
+    "reactify": "^1.1.0",
+    "watchify": "^3.1.1"
   },
   "keywords": [
     "twitter",
